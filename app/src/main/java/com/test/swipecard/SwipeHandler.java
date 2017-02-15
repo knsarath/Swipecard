@@ -41,16 +41,15 @@ public class SwipeHandler implements View.OnTouchListener {
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
-              /*  float releasePoint = event.getRawX() + mFloatingWindowDx;
+                float releasePoint = event.getRawX() + mFloatingWindowDx;
                 float movedDistance = Math.abs(releasePoint);
-                float quarterPoint = mDialogViewWidth / 5;
+                float quarterPoint = mDialogViewWidth / 4;
                 if (movedDistance > quarterPoint) {
                     int closeDirection = (releasePoint > 0) ? CLOSE_TO_RIGHT : CLOSE_TO_LEFT;
                     closeDialog(view, closeDirection);
                 } else {
-                    view.animate().x(mInitialDialogX).setDuration(200).start();
-                }*/
-                view.animate().x(mInitialDialogX).setDuration(200).rotation(0).alpha(1).start();
+                    view.animate().x(mInitialDialogX).setDuration(200).rotation(0).alpha(1).start();
+                }
                 break;
         }
         return true;
@@ -68,15 +67,10 @@ public class SwipeHandler implements View.OnTouchListener {
     }
 
     private void closeToLeft(View view) {
-
+        view.animate().x(mInitialDialogX - view.getWidth()).setDuration(500).alpha(0).start();
     }
 
     private void closeToRight(View view) {
-        view.animate()
-                .x(view.getWidth())
-                .yBy((float) 0.25)
-                .rotationBy(1)
-                .setDuration(200)
-                .start();
+        view.animate().x(mInitialDialogX + view.getWidth() * 2).setDuration(500).alpha(0).start();
     }
 }
