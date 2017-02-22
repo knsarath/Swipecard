@@ -1,6 +1,5 @@
 package com.test.swipecard;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -10,45 +9,41 @@ import android.view.View;
 public class SwipeHandler implements View.OnTouchListener {
     private static final int CLOSE_TO_RIGHT = 1;
     private static final int CLOSE_TO_LEFT = 2;
-    private float mFloatingWindowDx;
-    private float mDialogViewWidth;
-    private float mInitialDialogX;
-    private View mDialogView;
+    private float mCardDx;
+    private float mCardWidth;
+    private float mInitialCardX;
+    private View mParent;
     private boolean FINISH_FLAG = false;
     private static final String TAG = "SwipeHandler";
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
+        final float viewsStartOffset = view.getX();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                mDialogViewWidth = view.getWidth();
-                mFloatingWindowDx = view.getX() - event.getRawX();
-                mInitialDialogX = view.getX();
+                mCardWidth = view.getWidth();
+                mCardDx = -event.getRawX() + viewsStartOffset;
+                mParent = (View) view.getParent();
+                mInitialCardX = viewsStartOffset;
                 break;
             case MotionEvent.ACTION_MOVE:
-                float dialogViewsStartPoint = event.getRawX() + mFloatingWindowDx;
-                float dialogViewsEndPoint = dialogViewsStartPoint + mDialogViewWidth;
-                float point = (dialogViewsStartPoint > 0) ? dialogViewsStartPoint : dialogViewsEndPoint;
-                float alpha = (point / mDialogViewWidth);
-                alpha = (dialogViewsStartPoint > 0) ? 1 - alpha : alpha;
-                final float currentDistance = view.getX() - mInitialDialogX;
-                Log.d(TAG, "Initial = " + mInitialDialogX + " , current : = " + view.getX() + "Current distance = " + currentDistance);
+                float cardsNewX = mCardDx + event.getRawX();
+                final float currentDistance = viewsStartOffset - mInitialCardX;
                 view.animate()
-                        .x(dialogViewsStartPoint)
-                        .alpha(alpha)
+                        .x(cardsNewX)
                         .setDuration(0)
                         .rotation(currentDistance * 0.05f)
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
-                float releasePoint = event.getRawX() + mFloatingWindowDx;
+                float releasePoint = event.getRawX() + mCardDx;
                 float movedDistance = Math.abs(releasePoint);
-                float quarterPoint = mDialogViewWidth / 4;
+                float quarterPoint = mCardWidth / 4;
                 if (movedDistance > quarterPoint) {
                     int closeDirection = (releasePoint > 0) ? CLOSE_TO_RIGHT : CLOSE_TO_LEFT;
                     closeDialog(view, closeDirection);
                 } else {
-                    view.animate().x(mInitialDialogX).setDuration(200).rotation(0).alpha(1).start();
+                    view.animate().x(mInitialCardX).setDuration(200).rotation(0).alpha(1).start();
                 }
                 break;
         }
@@ -67,10 +62,10 @@ public class SwipeHandler implements View.OnTouchListener {
     }
 
     private void closeToLeft(View view) {
-        view.animate().x(mInitialDialogX - view.getWidth()).setDuration(500).alpha(0).start();
+        view.animate().x(mInitialCardX - view.getWidth()).setDuration(500).alpha(0).start();
     }
 
     private void closeToRight(View view) {
-        view.animate().x(mInitialDialogX + view.getWidth() * 2).setDuration(500).alpha(0).start();
+        view.animate().x(mInitialCardX + view.getWidth() * 2).setDuration(500).alpha(0).start();
     }
 }
