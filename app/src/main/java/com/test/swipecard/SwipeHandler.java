@@ -29,7 +29,10 @@ public class SwipeHandler implements View.OnTouchListener {
             case MotionEvent.ACTION_MOVE:
                 float cardsNewX = mCardDx + event.getRawX();
                 final float currentDistance = viewsStartOffset - mInitialCardX;
+                final boolean movedRight = cardsNewX > mInitialCardX;
+                final float alpha = (movedRight) ? (1 - ((view.getX() - mInitialCardX)) / (mParent.getWidth() - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
                 view.animate()
+                        .alpha(alpha)
                         .x(cardsNewX)
                         .setDuration(0)
                         .rotation(currentDistance * 0.05f)
