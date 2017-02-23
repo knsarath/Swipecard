@@ -71,6 +71,9 @@ public class SwipeHandler implements View.OnTouchListener {
     }
 
 
+    /**
+     * This will remove a view from its parent after onAnimationEnd
+     */
     public static class ViewDestroyer implements Animator.AnimatorListener {
         private View mView;
 
