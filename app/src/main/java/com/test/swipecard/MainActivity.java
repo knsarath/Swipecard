@@ -13,7 +13,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private View mView;
     private SwipeHandler mSwipeHandler;
     private FrameLayout mFrameLayout;
 

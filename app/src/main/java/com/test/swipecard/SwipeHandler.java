@@ -14,11 +14,12 @@ public class SwipeHandler implements View.OnTouchListener {
     private float mCardDx;
     private float mCardWidth;
     private float mInitialCardX;
-    private View mParent;
+    private float mParentWidth;
     private float mPercentageMoved = 1;
     private boolean mMovedRight;
     private static final String TAG = SwipeHandler.class.getSimpleName();
     private static int DURATION = 300;
+    private static int ON_RELEASE_ROTATE_BY = 30;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -27,14 +28,14 @@ public class SwipeHandler implements View.OnTouchListener {
                 mCardWidth = view.getWidth();
                 final float viewsStartOffset = view.getX();
                 mCardDx = -event.getRawX() + viewsStartOffset;
-                mParent = (View) view.getParent();
+                mParentWidth = ((ViewGroup) view.getParent()).getWidth();
                 mInitialCardX = view.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float cardsNewX = mCardDx + event.getRawX();
                 final float currentDistance = view.getX() - mInitialCardX;
                 mMovedRight = cardsNewX > mInitialCardX;
-                mPercentageMoved = mMovedRight ? (1 - ((view.getX() - mInitialCardX)) / (mParent.getWidth() - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
+                mPercentageMoved = mMovedRight ? (1 - ((view.getX() - mInitialCardX)) / (mParentWidth - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
                 view.animate()
                         .alpha(mPercentageMoved)
                         .x(cardsNewX)
@@ -50,30 +51,31 @@ public class SwipeHandler implements View.OnTouchListener {
     }
 
 
-    public void closedToLeft(View view) {
-        closeToLeftAnimation(view).start();
-    }
-
-    public void closedToRight(View topCard) {
-        closeToRightAnimation(topCard).start();
-    }
-
     private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
         return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).rotation(0);
     }
 
     private ViewPropertyAnimator closeToLeftAnimation(View view) {
         final ViewGroup parent = (ViewGroup) view.getParent();
-        final ViewPropertyAnimator animator = view.animate().x(parent.getX() - view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(-30);
+        final ViewPropertyAnimator animator = view.animate().x(parent.getX() - view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(-ON_RELEASE_ROTATE_BY);
         animator.setListener(new ViewDestroyer(view));
         return animator;
     }
 
     private ViewPropertyAnimator closeToRightAnimation(View view) {
         final ViewGroup parent = (ViewGroup) view.getParent();
-        final ViewPropertyAnimator animator = view.animate().x(parent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(30);
+        final ViewPropertyAnimator animator = view.animate().x(parent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(ON_RELEASE_ROTATE_BY);
         animator.setListener(new ViewDestroyer(view));
         return animator;
+    }
+
+
+    public void closedToLeft(View view) {
+        closeToLeftAnimation(view).start();
+    }
+
+    public void closedToRight(View view) {
+        closeToRightAnimation(view).start();
     }
 
 
