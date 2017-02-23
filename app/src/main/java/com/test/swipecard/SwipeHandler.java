@@ -2,73 +2,61 @@ package com.test.swipecard;
 
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 
 /**
  * Created by sarath on 13/2/17.
  */
 public class SwipeHandler implements View.OnTouchListener {
-    private static final int CLOSE_TO_RIGHT = 1;
-    private static final int CLOSE_TO_LEFT = 2;
     private float mCardDx;
     private float mCardWidth;
     private float mInitialCardX;
     private View mParent;
-    private boolean FINISH_FLAG = false;
-    private static final String TAG = "SwipeHandler";
+    private float mPercentageMoved = 1;
+    private boolean mMovedRight;
+    private static final String TAG = SwipeHandler.class.getSimpleName();
+    private static int DURATION = 300;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        final float viewsStartOffset = view.getX();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mCardWidth = view.getWidth();
+                final float viewsStartOffset = view.getX();
                 mCardDx = -event.getRawX() + viewsStartOffset;
                 mParent = (View) view.getParent();
-                mInitialCardX = viewsStartOffset;
+                mInitialCardX = view.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
-                float cardsNewX = mCardDx + event.getRawX();
-                final float currentDistance = viewsStartOffset - mInitialCardX;
-                final boolean movedRight = cardsNewX > mInitialCardX;
-                final float alpha = (movedRight) ? (1 - ((view.getX() - mInitialCardX)) / (mParent.getWidth() - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
+                final float cardsNewX = mCardDx + event.getRawX();
+                final float currentDistance = view.getX() - mInitialCardX;
+                mMovedRight = cardsNewX > mInitialCardX;
+                mPercentageMoved = mMovedRight ? (1 - ((view.getX() - mInitialCardX)) / (mParent.getWidth() - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
                 view.animate()
-                        .alpha(alpha)
+                        .alpha(mPercentageMoved)
                         .x(cardsNewX)
                         .setDuration(0)
                         .rotation(currentDistance * 0.05f)
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
-                float releasePoint = event.getRawX() + mCardDx;
-                float movedDistance = Math.abs(releasePoint);
-                float quarterPoint = mCardWidth / 4;
-                if (movedDistance > quarterPoint) {
-                    int closeDirection = (releasePoint > 0) ? CLOSE_TO_RIGHT : CLOSE_TO_LEFT;
-                    closeDialog(view, closeDirection);
-                } else {
-                    view.animate().x(mInitialCardX).setDuration(200).rotation(0).alpha(1).start();
-                }
-                break;
+                ViewPropertyAnimator releaseAnimation = (mPercentageMoved < 0.5) ? (mMovedRight) ? closeToRightAnimation(view) : closeToLeftAnimation(view) : resetTolOldPositionAnimation(view);
+                releaseAnimation.start();
         }
+
         return true;
     }
 
-    private void closeDialog(View view, int dialogeCloseDirection) {
-        switch (dialogeCloseDirection) {
-            case CLOSE_TO_LEFT:
-                closeToLeft(view);
-                break;
-            case CLOSE_TO_RIGHT:
-                closeToRight(view);
-                break;
-        }
+    private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
+        return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).rotation(0);
     }
 
-    private void closeToLeft(View view) {
-        view.animate().x(mInitialCardX - view.getWidth()).setDuration(500).alpha(0).start();
+    private ViewPropertyAnimator closeToLeftAnimation(View view) {
+        final ViewPropertyAnimator animator = view.animate().x(mParent.getX() - view.getWidth()).setDuration(DURATION).alpha(0);
+        return animator;
     }
 
-    private void closeToRight(View view) {
-        view.animate().x(mInitialCardX + view.getWidth() * 2).setDuration(500).alpha(0).start();
+    private ViewPropertyAnimator closeToRightAnimation(View view) {
+        return view.animate().x(mParent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0);
     }
 }
