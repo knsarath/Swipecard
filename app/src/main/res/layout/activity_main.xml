@@ -10,7 +10,24 @@
     <FrameLayout
         android:id="@+id/frm"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_horizontal_margin">
+        <Button
+            android:id="@+id/close_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:text="LEFT"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+        <Button
+            android:id="@+id/close_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:text="RIGHT"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
     </FrameLayout>
 
 </LinearLayout>
