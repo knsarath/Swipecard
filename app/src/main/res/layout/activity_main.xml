@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context="com.test.swipecard.MainActivity">
-    <FrameLayout
+    <com.test.swipecard.SwipeSurface
         android:id="@+id/frm"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,6 +28,6 @@
             android:text="RIGHT"
             android:textSize="14dp"
             android:textStyle="bold"/>
-    </FrameLayout>
+    </com.test.swipecard.SwipeSurface>
 
 </LinearLayout>

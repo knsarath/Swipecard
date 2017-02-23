@@ -3,18 +3,19 @@ package com.test.swipecard;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private SwipeHandler mSwipeHandler;
-    private FrameLayout mFrameLayout;
+    private SwipeSurface mSwipeSurface;
 
 
     @Override
@@ -22,13 +23,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSwipeHandler = new SwipeHandler();
-        mFrameLayout = (FrameLayout) findViewById(R.id.frm);
-        for (int i = 0; i < 10; i++) {
-            final FrameLayout view = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.frame_layout, mFrameLayout, false);
-            view.setBackgroundColor(getColor());
-            mFrameLayout.addView(view);
-            view.setOnTouchListener(mSwipeHandler);
-        }
+        mSwipeSurface = (SwipeSurface) findViewById(R.id.frm);
+        List<CardData> list = getDummyData();
+        Log.d(TAG, "Size = " + list.size());
+        mSwipeSurface.setAdapter(new SwipeSurface.Adapter(list, R.layout.frame_layout));
+
 
         Button closeToLeftbutton = (Button) findViewById(R.id.close_left);
         Button closeToRightbutton = (Button) findViewById(R.id.close_right);
@@ -48,12 +47,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private List<CardData> getDummyData() {
+        final ArrayList<CardData> cardDatas = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            cardDatas.add(new CardData());
+        }
+        return cardDatas;
+    }
+
     private View getTopCard() {
-        final int index = mFrameLayout.getChildCount() - 1;
-        final View view = mFrameLayout.getChildAt(index);
-        if (view instanceof FrameLayout)
+        final int index = mSwipeSurface.getChildCount() - 1;
+        final View view = mSwipeSurface.getChildAt(index);
+
             return view;
-        else return null;
+
     }
 
     private int getColor() {
