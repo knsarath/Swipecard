@@ -45,7 +45,6 @@ public class SwipeHandler implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 ViewPropertyAnimator releaseAnimation = (mPercentageMoved < 0.5) ? (mMovedRight) ? closeToRightAnimation(view) : closeToLeftAnimation(view) : resetTolOldPositionAnimation(view);
                 releaseAnimation.start();
-
         }
         return true;
     }
