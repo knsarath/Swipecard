@@ -19,7 +19,6 @@ public class SwipeHandler implements View.OnTouchListener {
     private boolean mMovedRight;
     private static final String TAG = SwipeHandler.class.getSimpleName();
     private static int DURATION = 300;
-    private Animator.AnimatorListener mListener;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -53,7 +52,7 @@ public class SwipeHandler implements View.OnTouchListener {
 
 
 
-    
+
 
 
     private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
@@ -90,7 +89,7 @@ public class SwipeHandler implements View.OnTouchListener {
                 final ViewGroup parent = (ViewGroup) mView.getParent();
                 if (parent != null) {
                     parent.removeViewAt(parent.indexOfChild(mView));
-                    Log.d(TAG, "Remaining cards = " + ((ViewGroup) parent).getChildCount());
+                    Log.d(TAG, "Remaining cards = " + (parent).getChildCount());
                 }
             }
         }
