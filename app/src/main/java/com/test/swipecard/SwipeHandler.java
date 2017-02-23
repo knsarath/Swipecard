@@ -71,11 +71,15 @@ public class SwipeHandler implements View.OnTouchListener {
 
 
     public void closedToLeft(View view) {
-        closeToLeftAnimation(view).start();
+        if (view != null) {
+            closeToLeftAnimation(view).start();
+        }
     }
 
     public void closedToRight(View view) {
-        closeToRightAnimation(view).start();
+        if (view != null) {
+            closeToRightAnimation(view).start();
+        }
     }
 
 

@@ -35,19 +35,25 @@ public class MainActivity extends AppCompatActivity {
         closeToLeftbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int index = mFrameLayout.getChildCount() - 1;
-                final View topCard = mFrameLayout.getChildAt(index);
+                final View topCard = getTopCard();
                 mSwipeHandler.closedToLeft(topCard);
             }
         });
         closeToRightbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int index = mFrameLayout.getChildCount() - 1;
-                final View topCard = mFrameLayout.getChildAt(index);
+                final View topCard = getTopCard();
                 mSwipeHandler.closedToRight(topCard);
             }
         });
+    }
+
+    private View getTopCard() {
+        final int index = mFrameLayout.getChildCount() - 1;
+        final View view = mFrameLayout.getChildAt(index);
+        if (view instanceof FrameLayout)
+            return view;
+        else return null;
     }
 
     private int getColor() {
