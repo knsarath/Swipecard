@@ -1,7 +1,10 @@
 package com.test.swipecard;
 
+import android.animation.Animator;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 
 /**
@@ -16,6 +19,7 @@ public class SwipeHandler implements View.OnTouchListener {
     private boolean mMovedRight;
     private static final String TAG = SwipeHandler.class.getSimpleName();
     private static int DURATION = 300;
+    private Animator.AnimatorListener mListener;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -42,10 +46,15 @@ public class SwipeHandler implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 ViewPropertyAnimator releaseAnimation = (mPercentageMoved < 0.5) ? (mMovedRight) ? closeToRightAnimation(view) : closeToLeftAnimation(view) : resetTolOldPositionAnimation(view);
                 releaseAnimation.start();
-        }
 
+        }
         return true;
     }
+
+
+
+    
+
 
     private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
         return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).rotation(0);
@@ -53,10 +62,46 @@ public class SwipeHandler implements View.OnTouchListener {
 
     private ViewPropertyAnimator closeToLeftAnimation(View view) {
         final ViewPropertyAnimator animator = view.animate().x(mParent.getX() - view.getWidth()).setDuration(DURATION).alpha(0);
+        animator.setListener(new ViewDestroyer(view));
         return animator;
     }
 
     private ViewPropertyAnimator closeToRightAnimation(View view) {
-        return view.animate().x(mParent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0);
+        final ViewPropertyAnimator animator = view.animate().x(mParent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0);
+        animator.setListener(new ViewDestroyer(view));
+        return animator;
+    }
+
+
+    public static class ViewDestroyer implements Animator.AnimatorListener {
+        private View mView;
+
+        public ViewDestroyer(View view) {
+            mView = view;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            if (mView != null) {
+                final ViewGroup parent = (ViewGroup) mView.getParent();
+                if (parent != null) {
+                    parent.removeViewAt(parent.indexOfChild(mView));
+                    Log.d(TAG, "Remaining cards = " + ((ViewGroup) parent).getChildCount());
+                }
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }
