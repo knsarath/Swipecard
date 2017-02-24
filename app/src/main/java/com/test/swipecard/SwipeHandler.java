@@ -1,7 +1,6 @@
 package com.test.swipecard;
 
 import android.animation.Animator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,16 @@ public class SwipeHandler implements View.OnTouchListener {
     private static int DURATION = 300;
     private static int ON_RELEASE_ROTATE_BY = 30;
 
+    private ViewSwipeOutListener mViewSwipeOutListener;
+
+    public interface ViewSwipeOutListener {
+        void onViewSwipedOut(View view);
+    }
+
+    public void setViewSwipeOutListener(ViewSwipeOutListener viewSwipeOutListener) {
+        mViewSwipeOutListener = viewSwipeOutListener;
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getActionMasked()) {
@@ -33,14 +42,14 @@ public class SwipeHandler implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_MOVE:
                 final float cardsNewX = mCardDx + event.getRawX();
-                final float currentDistance = view.getX() - mInitialCardX;
+                final float distanceMoved = view.getX() - mInitialCardX;
                 mMovedRight = cardsNewX > mInitialCardX;
                 mPercentageMoved = mMovedRight ? (1 - ((view.getX() - mInitialCardX)) / (mParentWidth - mInitialCardX)) : ((view.getX() + mCardWidth) / (mInitialCardX + mCardWidth));
                 view.animate()
                         .alpha(mPercentageMoved)
                         .x(cardsNewX)
                         .setDuration(0)
-                        .rotation(currentDistance * 0.05f)
+                        .rotation(distanceMoved * 0.05f)
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
@@ -88,6 +97,12 @@ public class SwipeHandler implements View.OnTouchListener {
      */
     public static class ViewDestroyer implements Animator.AnimatorListener {
         private View mView;
+        private ViewSwipeOutListener mViewSwipeOutListener;
+
+        public ViewDestroyer(View view, ViewSwipeOutListener viewSwipeOutListener) {
+            mView = view;
+            mViewSwipeOutListener = viewSwipeOutListener;
+        }
 
         public ViewDestroyer(View view) {
             mView = view;
@@ -102,8 +117,9 @@ public class SwipeHandler implements View.OnTouchListener {
             if (mView != null) {
                 final ViewGroup parent = (ViewGroup) mView.getParent();
                 if (parent != null) {
-                    parent.removeViewAt(parent.indexOfChild(mView));
-                    Log.d(TAG, "Remaining cards = " + (parent).getChildCount());
+                    if (mViewSwipeOutListener != null) {
+                        mViewSwipeOutListener.onViewSwipedOut(mView);
+                    }
                 }
             }
         }

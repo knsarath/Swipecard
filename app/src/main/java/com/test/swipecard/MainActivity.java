@@ -34,15 +34,13 @@ public class MainActivity extends AppCompatActivity {
         closeToLeftbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View topCard = getTopCard();
-                mSwipeHandler.closedToLeft(topCard);
+               mSwipeSurface.swipeOutLeft();
             }
         });
         closeToRightbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View topCard = getTopCard();
-                mSwipeHandler.closedToRight(topCard);
+                mSwipeSurface.swipeOUtRight();
             }
         });
     }
@@ -56,11 +54,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private View getTopCard() {
-        final int index = mSwipeSurface.getChildCount() - 1;
-        final View view = mSwipeSurface.getChildAt(index);
-
-            return view;
-
+        for (int i = 0; i < mSwipeSurface.getChildCount(); i++) {
+            final View view = mSwipeSurface.getChildAt(i);
+            if (!(view instanceof Button))
+                return view;
+        }
+        return null;
     }
 
     private int getColor() {

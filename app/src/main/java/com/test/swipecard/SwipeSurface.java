@@ -2,12 +2,14 @@ package com.test.swipecard;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -15,15 +17,19 @@ import java.util.List;
  * Created by sarath on 23/2/17.
  */
 
-public class SwipeSurface extends FrameLayout {
+public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeOutListener {
 
+    private static final String TAG = "SwipeSurface";
     private SwipeHandler mSwipeHandler = new SwipeHandler();
     private Adapter mAdapter;
+    private static final int IN_MEMORY_VIEW_LIMIT = 2;
+    private ViewHolder[] mViewHolders = new ViewHolder[IN_MEMORY_VIEW_LIMIT];
+    private int mCurrentTop;
+
 
     public SwipeSurface(Context context) {
         super(context);
         init(null);
-
     }
 
     public SwipeSurface(Context context, AttributeSet attrs) {
@@ -32,18 +38,49 @@ public class SwipeSurface extends FrameLayout {
     }
 
     private void init(AttributeSet attrs) {
-
+        for (int i = 0; i < mViewHolders.length; i++) {
+            mViewHolders[i] = new ViewHolder(null);
+        }
+        mSwipeHandler.setViewSwipeOutListener(this);
     }
 
     public void setAdapter(Adapter adapter) {
+        mAdapter = adapter;
         final int count = adapter.getCount();
-
-        for (int i = 0; i < count; i++) {
-            SwipeItem swipeItem = new SwipeItem(getContext());
-            swipeItem.addView(adapter.getView(i, null, this));
-            addView(swipeItem);
-            swipeItem.setOnTouchListener(mSwipeHandler);
+        if (count > 0 && mCurrentTop < mAdapter.getCount()) {
+            for (int i = 0; i < IN_MEMORY_VIEW_LIMIT; i++) {
+                final View view = adapter.getView(mCurrentTop, mViewHolders[i % IN_MEMORY_VIEW_LIMIT].mView, this);
+                Log.d(TAG, "View = " + view.hashCode());
+                SwipeItem swipeItem = new SwipeItem(getContext());
+                swipeItem.addView(view);
+                mViewHolders[i % IN_MEMORY_VIEW_LIMIT].mView = swipeItem;
+                addView(swipeItem, 0);
+                mCurrentTop++;
+                swipeItem.setOnTouchListener(mSwipeHandler);
+            }
         }
+    }
+
+    @Override
+    public void onViewSwipedOut(View view) {
+        Log.d(TAG, "Current Top = " + mCurrentTop + "  mAdapterCount = " + mAdapter.getCount());
+        if (mCurrentTop < mAdapter.getCount()) {
+            final View newView = mAdapter.getView(mCurrentTop, null, this);
+            Log.d(TAG, "View = " + newView.hashCode());
+            Log.d(TAG, " Views X = " + view.getX());
+            addView(newView,0);
+            mCurrentTop++;
+            Log.d(TAG, "View swiped out");
+        }
+    }
+
+
+    public void swipeOutLeft() {
+        mSwipeHandler.closedToLeft(this.getChildAt(this.getChildCount() - 1));
+    }
+
+    public void swipeOUtRight() {
+        mSwipeHandler.closedToRight(this.getChildAt(this.getChildCount() - 1));
     }
 
 
@@ -73,9 +110,15 @@ public class SwipeSurface extends FrameLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(mLayoutResId, null, false);
-
-            return view;
+            if (convertView == null) {
+                Log.d(TAG, "Convertview is null creating new view");
+                convertView = LayoutInflater.from(parent.getContext()).inflate(mLayoutResId, null, false);
+            } else {
+                Log.d(TAG, "Convertview is " + convertView + " reusing view");
+            }
+            final TextView textView = (TextView) convertView.findViewById(R.id.txt);
+            textView.setText(position + "");
+            return convertView;
         }
     }
 
@@ -94,5 +137,14 @@ public class SwipeSurface extends FrameLayout {
         public boolean onInterceptTouchEvent(MotionEvent ev) {
             return true;
         }
+    }
+
+
+    public static class ViewHolder {
+        public ViewHolder(View view) {
+            mView = view;
+        }
+
+        View mView;
     }
 }
