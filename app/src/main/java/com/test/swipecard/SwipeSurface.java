@@ -21,7 +21,6 @@ import java.util.List;
 public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeOutListener {
 
     private static final String TAG = "SwipeSurface";
-    private SwipeHandler mSwipeHandler = new SwipeHandler();
     private Adapter mAdapter;
     private static final int IN_MEMORY_VIEW_LIMIT = 3;
     private int mCurrentTop;
@@ -39,7 +38,6 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     }
 
     private void init(AttributeSet attrs) {
-        mSwipeHandler.setViewSwipeOutListener(this);
     }
 
     public void setAdapter(Adapter adapter) {
@@ -59,7 +57,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         swipeItem.addView(view);
         addView(swipeItem, 0);
         mCurrentTop++;
-        swipeItem.setOnTouchListener(mSwipeHandler);
+        swipeItem.setOnTouchListener(new SwipeHandler(this));
     }
 
     @Override
@@ -73,11 +71,11 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
 
 
     public void swipeOutLeft() {
-        mSwipeHandler.closedToLeft(this.getChildAt(this.getChildCount() - 1));
+        new SwipeHandler(this).closedToLeft(this.getChildAt(this.getChildCount() - 1));
     }
 
     public void swipeOUtRight() {
-        mSwipeHandler.closedToRight(this.getChildAt(this.getChildCount() - 1));
+        new SwipeHandler(this).closedToRight(this.getChildAt(this.getChildCount() - 1));
     }
 
 

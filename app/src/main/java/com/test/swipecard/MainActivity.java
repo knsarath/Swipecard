@@ -14,7 +14,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private SwipeHandler mSwipeHandler;
     private SwipeSurface mSwipeSurface;
 
 
@@ -22,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSwipeHandler = new SwipeHandler();
         mSwipeSurface = (SwipeSurface) findViewById(R.id.frm);
         List<CardData> list = getDummyData();
         Log.d(TAG, "Size = " + list.size());

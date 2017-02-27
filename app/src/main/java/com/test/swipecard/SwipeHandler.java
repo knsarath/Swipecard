@@ -26,7 +26,7 @@ public class SwipeHandler implements View.OnTouchListener {
         void onViewSwipedOut(View view);
     }
 
-    public void setViewSwipeOutListener(ViewSwipeOutListener viewSwipeOutListener) {
+    public SwipeHandler(ViewSwipeOutListener viewSwipeOutListener) {
         mViewSwipeOutListener = viewSwipeOutListener;
     }
 
