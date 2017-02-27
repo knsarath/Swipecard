@@ -1,6 +1,8 @@
 package com.test.swipecard;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     private Adapter mAdapter;
     private static final int IN_MEMORY_VIEW_LIMIT = 2;
     private int mCurrentTop;
+    private static String ADAPTER_POSITION = "current_top";
 
 
     public SwipeSurface(Context context) {
@@ -43,6 +45,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     public void setAdapter(Adapter adapter) {
         mAdapter = adapter;
         final int count = adapter.getCount();
+        removeAllViews();
         if (count > 0 && mCurrentTop < mAdapter.getCount()) {
             for (int i = 0; i < IN_MEMORY_VIEW_LIMIT; i++) {
                 final View view = mAdapter.getView(mCurrentTop, null, this);
@@ -110,8 +113,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
             } else {
                 Log.d(TAG, "Convertview is " + convertView + " reusing view");
             }
-            final TextView textView = (TextView) convertView.findViewById(R.id.txt);
-            textView.setText(position + "");
+            convertView.findViewById(R.id.view).setBackgroundColor(Util.getColor());
             return convertView;
         }
     }
@@ -132,5 +134,59 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
             return true;
         }
     }
+
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState savedState = new SavedState(superState);
+        savedState.CURRENT_ADAPTER_POSITION = this.mCurrentTop;
+        return savedState;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        //begin boilerplate code so parent classes can restore state
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        this.mCurrentTop = ss.CURRENT_ADAPTER_POSITION;
+    }
+
+
+    private static class SavedState extends BaseSavedState {
+        int CURRENT_ADAPTER_POSITION;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            this.CURRENT_ADAPTER_POSITION = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(this.CURRENT_ADAPTER_POSITION);
+        }
+
+        //required field that makes Parcelables from a Parcel
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
+    }
+
 
 }
