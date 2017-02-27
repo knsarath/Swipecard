@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         mSwipeSurface.setAdapter(new SwipeSurface.Adapter(list, R.layout.frame_layout));
 
 
-        Button closeToLeftbutton = (Button) findViewById(R.id.close_left);
+        /*Button closeToLeftbutton = (Button) findViewById(R.id.close_left);
         Button closeToRightbutton = (Button) findViewById(R.id.close_right);
         closeToLeftbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mSwipeSurface.swipeOUtRight();
             }
-        });
+        });*/
     }
 
     private List<CardData> getDummyData() {

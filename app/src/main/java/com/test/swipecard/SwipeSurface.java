@@ -23,7 +23,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     private static final String TAG = "SwipeSurface";
     private SwipeHandler mSwipeHandler = new SwipeHandler();
     private Adapter mAdapter;
-    private static final int IN_MEMORY_VIEW_LIMIT = 2;
+    private static final int IN_MEMORY_VIEW_LIMIT = 3;
     private int mCurrentTop;
     private static String ADAPTER_POSITION = "current_top";
 
@@ -113,7 +113,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
             } else {
                 Log.d(TAG, "Convertview is " + convertView + " reusing view");
             }
-            convertView.findViewById(R.id.view).setBackgroundColor(Util.getColor());
+            //convertView.findViewById(R.id.view).setBackgroundColor(Util.getColor());
             return convertView;
         }
     }

@@ -5,33 +5,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:orientation="horizontal"
     tools:context="com.test.swipecard.MainActivity">
-
-    <FrameLayout android:layout_width="match_parent"
-                 android:layout_height="match_parent">
-        <com.test.swipecard.SwipeSurface
-            android:id="@+id/frm"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight=".8"/>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/activity_horizontal_margin">
-        </com.test.swipecard.SwipeSurface>
-        <Button
-            android:id="@+id/close_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
-            android:text="LEFT"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-        <Button
-            android:id="@+id/close_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:text="RIGHT"
-            android:textSize="14dp"
-            android:textStyle="bold"/>
-    </FrameLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:background="#e7e5e5">
+            <com.test.swipecard.SwipeSurface
+                android:id="@+id/frm"
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
 
+            </com.test.swipecard.SwipeSurface>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
