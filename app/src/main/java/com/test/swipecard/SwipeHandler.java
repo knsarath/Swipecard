@@ -50,6 +50,8 @@ public class SwipeHandler implements View.OnTouchListener {
                         .x(cardsNewX)
                         .setDuration(0)
                         .rotation(distanceMoved * 0.05f)
+                        .scaleX(mPercentageMoved > 0.85f ? mPercentageMoved : view.getScaleX())
+                        .scaleY(mPercentageMoved > 0.85f ? mPercentageMoved : view.getScaleY())
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
@@ -60,7 +62,7 @@ public class SwipeHandler implements View.OnTouchListener {
     }
 
     private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
-        return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).rotation(0);
+        return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).scaleX(1.0f).scaleY(1.0f).rotation(0);
     }
 
     private ViewPropertyAnimator closeToLeftAnimation(View view) {
