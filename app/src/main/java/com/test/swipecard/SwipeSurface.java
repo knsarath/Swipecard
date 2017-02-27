@@ -23,7 +23,6 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     private SwipeHandler mSwipeHandler = new SwipeHandler();
     private Adapter mAdapter;
     private static final int IN_MEMORY_VIEW_LIMIT = 2;
-    private ViewHolder[] mViewHolders = new ViewHolder[IN_MEMORY_VIEW_LIMIT];
     private int mCurrentTop;
 
 
@@ -38,9 +37,6 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     }
 
     private void init(AttributeSet attrs) {
-        for (int i = 0; i < mViewHolders.length; i++) {
-            mViewHolders[i] = new ViewHolder(null);
-        }
         mSwipeHandler.setViewSwipeOutListener(this);
     }
 
@@ -49,11 +45,9 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         final int count = adapter.getCount();
         if (count > 0 && mCurrentTop < mAdapter.getCount()) {
             for (int i = 0; i < IN_MEMORY_VIEW_LIMIT; i++) {
-                final View view = adapter.getView(mCurrentTop, mViewHolders[i % IN_MEMORY_VIEW_LIMIT].mView, this);
-                Log.d(TAG, "View = " + view.hashCode());
+                final View view = adapter.getView(mCurrentTop, null, this);
                 SwipeItem swipeItem = new SwipeItem(getContext());
                 swipeItem.addView(view);
-                mViewHolders[i % IN_MEMORY_VIEW_LIMIT].mView = swipeItem;
                 addView(swipeItem, 0);
                 mCurrentTop++;
                 swipeItem.setOnTouchListener(mSwipeHandler);
@@ -66,9 +60,8 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         Log.d(TAG, "Current Top = " + mCurrentTop + "  mAdapterCount = " + mAdapter.getCount());
         if (mCurrentTop < mAdapter.getCount()) {
             final View newView = mAdapter.getView(mCurrentTop, null, this);
-            Log.d(TAG, "View = " + newView.hashCode());
-            Log.d(TAG, " Views X = " + view.getX());
-            addView(newView,0);
+            newView.setOnTouchListener(mSwipeHandler);
+            addView(newView, 0);
             mCurrentTop++;
             Log.d(TAG, "View swiped out");
         }
@@ -139,12 +132,4 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         }
     }
 
-
-    public static class ViewHolder {
-        public ViewHolder(View view) {
-            mView = view;
-        }
-
-        View mView;
-    }
 }

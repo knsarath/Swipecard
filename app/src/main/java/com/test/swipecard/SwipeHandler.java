@@ -59,7 +59,6 @@ public class SwipeHandler implements View.OnTouchListener {
         return true;
     }
 
-
     private ViewPropertyAnimator resetTolOldPositionAnimation(View view) {
         return view.animate().x(mInitialCardX).setDuration(DURATION).alpha(1).rotation(0);
     }
@@ -67,14 +66,14 @@ public class SwipeHandler implements View.OnTouchListener {
     private ViewPropertyAnimator closeToLeftAnimation(View view) {
         final ViewGroup parent = (ViewGroup) view.getParent();
         final ViewPropertyAnimator animator = view.animate().x(parent.getX() - view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(-ON_RELEASE_ROTATE_BY);
-        animator.setListener(new ViewDestroyer(view));
+        animator.setListener(new ViewDestroyer(view, mViewSwipeOutListener));
         return animator;
     }
 
     private ViewPropertyAnimator closeToRightAnimation(View view) {
         final ViewGroup parent = (ViewGroup) view.getParent();
         final ViewPropertyAnimator animator = view.animate().x(parent.getWidth() + view.getWidth()).setDuration(DURATION).alpha(0).rotationBy(ON_RELEASE_ROTATE_BY);
-        animator.setListener(new ViewDestroyer(view));
+        animator.setListener(new ViewDestroyer(view, mViewSwipeOutListener));
         return animator;
     }
 
