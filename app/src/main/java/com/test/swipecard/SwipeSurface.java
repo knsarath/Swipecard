@@ -45,25 +45,26 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         final int count = adapter.getCount();
         if (count > 0 && mCurrentTop < mAdapter.getCount()) {
             for (int i = 0; i < IN_MEMORY_VIEW_LIMIT; i++) {
-                final View view = adapter.getView(mCurrentTop, null, this);
-                SwipeItem swipeItem = new SwipeItem(getContext());
-                swipeItem.addView(view);
-                addView(swipeItem, 0);
-                mCurrentTop++;
-                swipeItem.setOnTouchListener(mSwipeHandler);
+                final View view = mAdapter.getView(mCurrentTop, null, this);
+                addCard(view);
             }
         }
     }
 
+    private void addCard(View view) {
+        SwipeItem swipeItem = new SwipeItem(getContext());
+        swipeItem.addView(view);
+        addView(swipeItem, 0);
+        mCurrentTop++;
+        swipeItem.setOnTouchListener(mSwipeHandler);
+    }
+
     @Override
     public void onViewSwipedOut(View view) {
-        Log.d(TAG, "Current Top = " + mCurrentTop + "  mAdapterCount = " + mAdapter.getCount());
+        Log.d(TAG, "View swiped out");
         if (mCurrentTop < mAdapter.getCount()) {
             final View newView = mAdapter.getView(mCurrentTop, null, this);
-            newView.setOnTouchListener(mSwipeHandler);
-            addView(newView, 0);
-            mCurrentTop++;
-            Log.d(TAG, "View swiped out");
+            addCard(newView);
         }
     }
 
