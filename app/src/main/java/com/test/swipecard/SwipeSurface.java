@@ -111,12 +111,12 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                //  Log.d(TAG, "Convertview is null creating new view");
+
                 convertView = LayoutInflater.from(parent.getContext()).inflate(mLayoutResId, null, false);
             } else {
                 //  Log.d(TAG, "Convertview is " + convertView + " reusing view");
             }
-            //convertView.findViewById(R.id.view).setBackgroundColor(Util.getColor());
+
             return convertView;
         }
     }
