@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         mSwipeSurface = (SwipeSurface) findViewById(R.id.frm);
         List<CardData> list = getDummyData();
         Log.d(TAG, "Size = " + list.size());
-        mSwipeSurface.setAdapter(new SwipeSurface.Adapter(list, R.layout.frame_layout));
+        mSwipeSurface.setAdapter(new SwipeSurface.Adapter(list, R.layout.card));
 
 
         /*Button closeToLeftbutton = (Button) findViewById(R.id.close_left);

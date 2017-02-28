@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     private static final int IN_MEMORY_VIEW_LIMIT = 3;
     private int mCurrentTop;
     private static String ADAPTER_POSITION = "current_top";
-    private static int CARD_STACK_MARGIN = 20;;
+    private static int CARD_STACK_MARGIN = 20;
+    ;
 
 
     public SwipeSurface(Context context) {
@@ -111,12 +113,10 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-
                 convertView = LayoutInflater.from(parent.getContext()).inflate(mLayoutResId, null, false);
-            } else {
-                //  Log.d(TAG, "Convertview is " + convertView + " reusing view");
             }
-
+            TextView textView = (TextView) convertView.findViewById(R.id.card_num);
+            textView.setText("CARD " + (position + 1));
             return convertView;
         }
     }
