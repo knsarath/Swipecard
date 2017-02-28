@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +24,7 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
     private static final int IN_MEMORY_VIEW_LIMIT = 3;
     private int mCurrentTop;
     private static String ADAPTER_POSITION = "current_top";
+    private static int CARD_STACK_MARGIN = 20;;
 
 
     public SwipeSurface(Context context) {
@@ -56,13 +56,18 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         SwipeItem swipeItem = new SwipeItem(getContext());
         swipeItem.addView(view);
         addView(swipeItem, 0);
+        for (int i = 0; i < getChildCount(); i++) {
+            final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            getChildAt(i).setLayoutParams(params);
+            params.setMargins(0, CARD_STACK_MARGIN * (IN_MEMORY_VIEW_LIMIT - i), 0, 0);
+        }
         mCurrentTop++;
         swipeItem.setOnTouchListener(new SwipeHandler(this));
     }
 
     @Override
     public void onViewSwipedOut(View view) {
-        Log.d(TAG, "View swiped out");
+        removeView(view);
         if (mCurrentTop < mAdapter.getCount()) {
             final View newView = mAdapter.getView(mCurrentTop, null, this);
             addCard(newView);
@@ -106,10 +111,10 @@ public class SwipeSurface extends FrameLayout implements SwipeHandler.ViewSwipeO
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                Log.d(TAG, "Convertview is null creating new view");
+                //  Log.d(TAG, "Convertview is null creating new view");
                 convertView = LayoutInflater.from(parent.getContext()).inflate(mLayoutResId, null, false);
             } else {
-                Log.d(TAG, "Convertview is " + convertView + " reusing view");
+                //  Log.d(TAG, "Convertview is " + convertView + " reusing view");
             }
             //convertView.findViewById(R.id.view).setBackgroundColor(Util.getColor());
             return convertView;
