@@ -99,6 +99,7 @@ public class SwipeHandler implements View.OnTouchListener {
     public static class ViewDestroyer implements Animator.AnimatorListener {
         private View mView;
         private ViewSwipeOutListener mViewSwipeOutListener;
+        private boolean animationDone;
 
         public ViewDestroyer(View view, ViewSwipeOutListener viewSwipeOutListener) {
             mView = view;
@@ -115,13 +116,9 @@ public class SwipeHandler implements View.OnTouchListener {
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            if (mView != null) {
-                final ViewGroup parent = (ViewGroup) mView.getParent();
-                if (parent != null) {
-                    if (mViewSwipeOutListener != null) {
-                        mViewSwipeOutListener.onViewSwipedOut(mView);
-                    }
-                }
+            if (mView != null && !animationDone) {
+                animationDone = true;
+                mViewSwipeOutListener.onViewSwipedOut(mView);
             }
         }
 
